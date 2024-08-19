@@ -38,7 +38,11 @@ function GameBoard({ numCards }) {
     const playerName = prompt("You win! Enter your name:");
     if (playerName) {
       try {
-        await axios.post('https://api.example.com/scores', { name: playerName, score: time }); // Replace with your API URL
+        await axios.post(`${process.env.REACT_APP_API_URL}/setScore`, { 
+          name: playerName, 
+          score: time,
+          cards: numCards // Include the number of cards in the data
+        }); 
         alert('Score submitted successfully!');
       } catch (error) {
         console.error("Error submitting score:", error);

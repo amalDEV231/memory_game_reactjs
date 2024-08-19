@@ -6,18 +6,38 @@ function MainPage({ setNumCards }) {
   const [noCards, setNum] = useState(20);
   const [data, setData] = useState([]);
   const navigate = useNavigate();
+  const [scores, setScores] = useState({
+    name20: '',
+    score20: 0,
+    name36: '',
+    score36: 0,
+    name50: '',
+    score50: 0
+  });
+  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('asdf'); 
-        setData(response.data);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/getScore`);
+        const [data] = response.data;
+        const { _id, ...cards } = data;
+    
+        const { name: name20, score: score20 } = cards["20cards"];
+        const { name: name36, score: score36 } = cards["36cards"];
+        const { name: name50, score: score50 } = cards["50cards"];
+    
+        setScores({ name20, score20, name36, score36, name50, score50 });
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
+    
     fetchData();
   }, []);
+  
+  
+  
 
   useEffect(() => {
     setNumCards(noCards);
@@ -47,15 +67,19 @@ function MainPage({ setNumCards }) {
         </div>
         <button onClick={handleStartGame} style={styles.button}>Start Game</button>
         <div style={styles.scoresContainer}>
-          <h2 style={styles.subtitle}>Scores List</h2>
-          <ul style={styles.list}>
-            {data.map((item, index) => (
-              <li key={index} style={styles.listItem}>
-                {item.name}
-              </li>
-            ))}
-          </ul>
-        </div>
+  <h2 style={styles.subtitle}>  HighScores List</h2>
+
+      <h3>20 cards</h3>  {scores.name20} in {scores.score20}s
+      <br></br>
+      <h3>36 cards</h3>  {scores.name36} in {scores.score36}s
+      <br></br>
+      <h3>50 cards</h3>  {scores.name50} in {scores.score50}s
+
+
+
+</div>
+
+
       </div>
     </div>
   );
@@ -110,9 +134,6 @@ const styles = {
   buttonHover: {
     backgroundColor: '#0056b3',
   },
-  scoresContainer: {
-    marginTop: '20px',
-  },
   subtitle: {
     fontSize: '1.5rem',
     color: '#333',
@@ -128,12 +149,13 @@ const styles = {
   },
   scoresContainer: {
     marginTop: '20px',
-    maxHeight: '200px', // Set a maximum height for the scrollable area
-    overflowY: 'auto', // Enable vertical scrolling
-   // border: '1px solid #ddd', // Optional: add a border for better visibility
-    padding: '10px', // Optional: add padding inside the scrollable area
-    borderRadius: '4px', // Optional: add border radius
+    maxHeight: '200px', // Set maximum height
+    overflowY: 'auto',  // Enable vertical scrolling
+    padding: '10px',
+    borderRadius: '4px',
+    border: '1px solid #ddd', // Optional border
   },
+  
 };
 
 export default MainPage;
